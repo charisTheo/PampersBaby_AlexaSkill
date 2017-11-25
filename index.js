@@ -20,7 +20,7 @@ const handlers = {
         }, (error, response, body) => {
             if (response.statusCode == 200) {
                 var name = xmlParser(body);
-                this.emit(':tell', `How does the name ${name.names[0].name} sound for a boy?`);
+                this.emit(':tell', `How does the name ${name} sound for a boy?`);
             } else {
                 this.emit(':tell', "I'm sorry I couldn't find a name");
             }
@@ -34,7 +34,7 @@ const handlers = {
         }, (error, response, body) => {
             if (response.statusCode == 200) {
                 var name = xmlParser(body);
-                this.emit(':tell', `How does the name ${JSON.stringify(name.names[0].name)} sound for a girl?`);
+                this.emit(':tell', `How does the name ${JSON.stringify(name)} sound for a girl?`);
             } else {
                 this.emit(':tell', "I'm sorry I couldn't find a name");
             }
@@ -42,6 +42,9 @@ const handlers = {
     },
     'SpecificNameIntent': function() {
 
+    },
+    'ProductHelpIntent': function() {
+        this.emit(':tell', "Which product do you want help with?");
     },
     'SoundIntent': function() {
         //play a random sound
@@ -70,6 +73,9 @@ const handlers = {
     'AMAZON.StopIntent': function () {
         this.emit(':tell', this.t('STOP_MESSAGE'));
     },
+    'Unhandled': function() {
+        this.emit(':tell', "I'm sorry, did you say anything?");
+    }
 };
 
 exports.handler = function (event, context) {
