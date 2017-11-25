@@ -9,13 +9,16 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="500"
-   height="350"
-   viewBox="0 0 500.00001 350.00001"
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="logo.svg">
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="/home/charis/Desktop/PampersBaby_AlexaSkill/logo_512.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,9 +28,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.83857143"
-     inkscape:cx="67.308364"
-     inkscape:cy="277.68791"
+     inkscape:zoom="0.59295954"
+     inkscape:cx="46.57467"
+     inkscape:cy="182.75759"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -38,7 +41,8 @@
      inkscape:window-maximized="1"
      units="px"
      inkscape:snap-smooth-nodes="false"
-     inkscape:object-nodes="false" />
+     inkscape:object-nodes="false"
+     inkscape:showpageshadow="false" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -55,7 +59,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-702.36216)">
+     transform="translate(0,-540.36216)">
     <path
        style="fill:#000000"
        d=""
@@ -86,7 +90,7 @@
        inkscape:export-ydpi="360" />
     <g
        id="g4418"
-       transform="translate(23.593437,395.45607)"
+       transform="matrix(1.0859827,0,0,1.0859827,10.12639,273.02048)"
        inkscape:export-xdpi="360"
        inkscape:export-ydpi="360">
       <path
@@ -224,16 +228,16 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-404.25894"
-       y="787.62622"
+       style="font-style:normal;font-weight:normal;font-size:9.00533009px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-110.76771"
+       y="820.10577"
        id="text4414"
        sodipodi:linespacing="125%"
        inkscape:export-xdpi="360"
        inkscape:export-ydpi="360"><tspan
          sodipodi:role="line"
          id="tspan4416"
-         x="-404.25894"
-         y="787.62622" /></text>
+         x="-110.76771"
+         y="820.10577" /></text>
   </g>
 </svg>
