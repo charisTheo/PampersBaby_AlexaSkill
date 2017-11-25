@@ -4,44 +4,55 @@ const httpRequest = require('request');
 const xmlParser = require('xml-parser');
 const Alexa = require('alexa-sdk');
 const APP_ID =  "amzn1.ask.skill.909d4dd8-7824-4fec-b711-6d11121bb1e1"; 
-const namesArray = require('./namesArray.js');
 const NAMES_API_KEY = "ch244216";
+let namesArray = require('./namesArray.js');
 let gender;
+let name;
 
 const handlers = {
     'LaunchRequest': function () {
         this.emit(':tell', "Hello mother, how can I be of help?");
     },
     'RandomBoyNameIntent': function () {        
+        name = "";      
         //get random name from API
         httpRequest.get({
             url: `https://www.behindthename.com/api/random.php?usage=ita&gender=m&key=${NAMES_API_KEY}`,
             json: true
         }, (error, response, body) => {
             if (response.statusCode == 200) {
-                var name = xmlParser(body);
-                this.emit(':tell', `How does the name ${name.root.children[0].children[0].content} sound for a boy?`);
+                var jsonBody = xmlParser(body);
+                name = jsonBody.root.children[0].children[0].content;
+                this.emit(':tell', `How about the name ${name}?`);
+                this.emit('SpecificNameIntent');
             } else {
                 this.emit(':tell', "I'm sorry I couldn't find a name");
             }
         });
     },
-    'RandomGirlNameIntent': function () {        
+    'RandomGirlNameIntent': function () {  
+        name = "";      
         //get random name from API
         httpRequest.get({
             url: `https://www.behindthename.com/api/random.php?usage=ita&gender=f&key=${NAMES_API_KEY}`,
             json: true
         }, (error, response, body) => {
             if (response.statusCode == 200) {
-                var name = xmlParser(body);
-                this.emit(':tell', `How does the name ${name.root.children[0].children[0].content} sound for a girl?`);
+                var jsonBody = xmlParser(body);
+                name = jsonBody.root.children[0].children[0].content;
+                this.emit(':tell', `How about the name ${name}?`);
+                this.emit('SpecificNameIntent');
             } else {
                 this.emit(':tell', "I'm sorry I couldn't find a name");
             }
         });
     },
     'SpecificNameIntent': function() {
-
+        if (name !== "") {
+            //return information about a specific name
+            var description = getNameDescription(name.toString());
+            this.emit(':tell', `${name} comes from ${description}`);
+        }
     },
     'ProductHelpIntent': function() {
         this.emit(':tell', "Which product do you want help with?");
@@ -78,6 +89,10 @@ const handlers = {
     }
 };
 
+function getNameDescription(_name) {
+    return namesArray._name.toString();
+}
+
 exports.handler = function (event, context) {
     const alexa = Alexa.handler(event, context);
     alexa.APP_ID = APP_ID;
@@ -86,20 +101,3 @@ exports.handler = function (event, context) {
     alexa.registerHandlers(handlers);
     alexa.execute();
 };
-
-
-var getWeather = (latitude, longitude, callback) => {
-    request({
-        url: `https://api.darksky.net/forecast/74614fe7ed768314b560e5607769f7ce/${latitude},${longitude}`,
-        json: true
-    }, (error, response, body) => {
-        if (!error && response.statusCode === 200) {
-            callback(undefined, {
-                temperature: body.currently.temperature,
-                apparentTemperature: body.currently.apparentTemperature
-            });
-        } else {
-            callback("Unable to connect to forecast.io servers");
-        }
-    });
-}
