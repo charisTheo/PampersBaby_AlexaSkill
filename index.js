@@ -20,7 +20,7 @@ const handlers = {
         }, (error, response, body) => {
             if (response.statusCode == 200) {
                 var name = xmlParser(body);
-                this.emit(':tell', `How does the name ${name} sound for a boy?`);
+                this.emit(':tell', `How does the name ${name.root.children[0].children[0].content} sound for a boy?`);
             } else {
                 this.emit(':tell', "I'm sorry I couldn't find a name");
             }
@@ -34,7 +34,7 @@ const handlers = {
         }, (error, response, body) => {
             if (response.statusCode == 200) {
                 var name = xmlParser(body);
-                this.emit(':tell', `How does the name ${JSON.stringify(name)} sound for a girl?`);
+                this.emit(':tell', `How does the name ${name.root.children[0].children[0].content} sound for a girl?`);
             } else {
                 this.emit(':tell', "I'm sorry I couldn't find a name");
             }
