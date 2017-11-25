@@ -5,9 +5,13 @@ const xmlParser = require('xml-parser');
 const Alexa = require('alexa-sdk');
 const audioEventHandlers = require('./audioEventHandlers');
 const APP_ID =  "amzn1.ask.skill.909d4dd8-7824-4fec-b711-6d11121bb1e1"; 
+const audioUrlLullaby = 'https://ia802701.us.archive.org/7/items/EmilyLacyHoboslullaby/hoboslullaby.mp3';
+const audioUrlWhiteNoise = 'https://ia802705.us.archive.org/13/items/WhiteNoise_296/whitestatic.mp3';
 const NAMES_API_KEY = "ch244216";
 let gender;
-let name;
+let randomName;
+let slotName;
+let audioUrl;
 
 
 const handlers = {
@@ -15,7 +19,7 @@ const handlers = {
         this.emit(':tell', "Hello mother, how can I be of help?");
     },
     'RandomBoyNameIntent': function () {        
-        name = "";      
+        randomName = "";      
         //get random name from API
         httpRequest.get({
             url: `https://www.behindthename.com/api/random.php?usage=ita&gender=m&key=${NAMES_API_KEY}`,
@@ -23,19 +27,20 @@ const handlers = {
         }, (error, response, body) => {
             if (response.statusCode == 200) {
                 var jsonBody = xmlParser(body);
-                name = jsonBody.root.children[0].children[0].content;
-                var description = getNameDescription(name.toLowerCase());
-                this.emit(':tell', `How about the name ${name}?`);
+                randomName = jsonBody.root.children[0].children[0].content;
+                this.emit(':tell', `How about the name ${randomName}?`);
+                var description = getNameDescription(randomName.toLowerCase()) || undefined;
                 if (description) {
                     this.emit('SpecificNameIntent');
                 }
             } else {
+                console.log("Error: ", error);
                 this.emit(':tell', "I'm sorry I couldn't find a name");
             }
         });
     },
     'RandomGirlNameIntent': function () {  
-        name = "";      
+        randomName = "";      
         //get random name from API
         httpRequest.get({
             url: `https://www.behindthename.com/api/random.php?usage=ita&gender=f&key=${NAMES_API_KEY}`,
@@ -43,31 +48,41 @@ const handlers = {
         }, (error, response, body) => {
             if (response.statusCode == 200) {
                 var jsonBody = xmlParser(body);
-                name = jsonBody.root.children[0].children[0].content;
-                this.emit(':tell', `How about the name ${name}?`);
+                randomName = jsonBody.root.children[0].children[0].content;
+                this.emit(':tell', `How about the name ${randomName}?`);
+                var description = getNameDescription(randomName.toLowerCase()) || undefined;
                 if (description) {
                     this.emit('SpecificNameIntent');
                 }
             } else {
+                console.log("Error: ", error);
                 this.emit(':tell', "I'm sorry I couldn't find a name");
             }
         });
     },
     'SpecificNameIntent': function() {
-            var slotName = this.event.request.intent.slots.Name.value;
-            //return information about a specific name
-            var description = getNameDescription(slotName.toLowerCase());
-            if (description) {
-                this.emit(':tell', `${slotName} comes from ${description}`);
-            } else {
-                this.emit(':tell', "I'm sorry, I couldn't find a description for the name " + slotName + ".");
-            }
+        if (randomName != "") {
+            slotName = randomName;
+        } else {
+            slotName = this.event.request.intent.slots.Name.value;
+        }
+        //return information about a specific name
+        var description = getNameDescription(slotName.toLowerCase()) || undefined;
+        if (description) {
+            this.emit(':tell', `${slotName} comes from ${description}`);
+        } else {
+            this.emit(':tell', `I'm sorry, I couldn't find a description for the name ${slotName.toString()}`);
+        }
+        randomName = "";
     },
+    'BabyWeightIntentNoValue': function() {
+        this.emit(':tell', "How much does your baby weigh in pounds?");    
+    },        
     'BabyWeightIntent': function() {
         var weight = this.event.request.intent.slots.Weight.value;
-        if (weight == undefined) {
-            this.emit(':tell', "How much does your baby weigh in pounds?");
-        }
+        // if (weight == undefined) {
+        //     this.emit(':tell', "How much does your baby weigh in pounds?");
+        // }
 
         if (weight < 4) {
             this.emit(':tell', "Your baby is too small for Pampers nappies.");
@@ -87,42 +102,46 @@ const handlers = {
     },
     'WhatIsNappyRash': function(){
         this.emit(':tell', "Nappy rash is a common form of inflamed skin that may appear as red or bumpy surrounding the area of your baby’s nappy.");
-    }
+    },
     'NappyRashSymptoms': function(){
         this.emit(':tell', "If your baby’s nappy area looks irritated and red, it's probably nappy rash. The skin may also be a little puffy and warm when you touch it. Nappy rash can be mild – a few prickly red spots in a small area – or extensive, with tender red bumps that spread to your baby’s tummy and thighs.");
-    }
+    },
     'NappyRashTreatment': function(){
         this.emit(':tell', "To treat nappy rash, it’s important to change your baby's nappies frequently to reduce moisture on the skin.");
-    }
+    },
     'PreventNappyRash': function(){
         this.emit(':tell', "Consider using a nappy, such as Pampers Premium Protection New Baby, which has thin layer of lotion on the top sheet to help keep your baby’s delicate skin dry.");
-    }
+    },
     'BabyNappyLeaking': function(){
         this.emit(':tell', "Because babies come in all different shapes and sizes, nappies fit babies differently. At Pampers, we measure thousands of babies' legs, bottoms and waists to try to get a good fit that helps contain leaks. Sometimes leaks happen because the leg cuff or waist is a bit folded. Running your finger around the waist band and cuffs sometimes helps to ensure a better fit. Another reason for leaks is if there isn't enough absorbent material for the baby’s urine output. If your baby is close to the upper end of the weight range of the nappy you're currently using, you may want to try the next nappy size up, as there is more absorbent material in the larger nappies. Pampers Baby can help you find the correct size nappy for your baby. For example, ask What size nappy should a 15 pound baby wear.");
-    }
+    },
     'CausesNappyRash': function(){
         this.emit(':tell', "Unfortunately, nappy rash is very common. More than half of babies between the ages of 4 months and 15 months develop nappy rash, and nearly all babies will get at least one nappy rash before they are potty-trained. Changing the nappy promptly after it becomes wet or soiled is the best way to prevent nappy rash.");
-    }
+    },
     'GelBeads': function(){
-        this.emit(';tell', "This super-absorbent gel is commonly used in disposable nappies and in the packaging of many food products. These small gel beads absorb nearly 30 times their weight, to help lock moisture away from your baby’s skin. Occasionally, you may see some of these gel beads on your baby’s skin. They are safe and can be gently wiped away.");
-    }
+        this.emit(':tell', "This super-absorbent gel is commonly used in disposable nappies and in the packaging of many food products. These small gel beads absorb nearly 30 times their weight, to help lock moisture away from your baby’s skin. Occasionally, you may see some of these gel beads on your baby’s skin. They are safe and can be gently wiped away.");
+    },
     'ProductHelpIntent': function() {
         this.emit(':tell', "Which product do you want help with?");
     },
-    'SoundIntent': function() {
-        this.emit(':tell', "Playing lullaby song");
+    'LullabyIntent': function() {
+        audioUrl = audioUrlLullaby;
         this.emit('AMAZON.ResumeIntent');
-    },    
+    },
+    'WhiteNoiseIntent': function() {
+        audioUrl = audioUrlWhiteNoise;
+        this.emit('AMAZON.ResumeIntent');
+    },
     'AMAZON.PauseIntent': function(){
         this.response.audioPlayerPause();
     },
     'AMAZON.ResumeIntent': function(){
-        var audioUrl = 'https://ia802701.us.archive.org/7/items/EmilyLacyHoboslullaby/hoboslullaby.mp3';
-        this.response.audioPlayerPlay('REPLACE_ALL', audioUrl, 'lullabyStream', null, 500);
+        this.response.audioPlayerPlay('REPLACE_ALL', audioUrl, audioUrl, null, 500);
+        this.emit(':responseReady');
     },
     'AMAZON.HelpIntent': function () {
         const speechOutput = this.t('HELP_MESSAGE');
-        const reprompt = this.t('HELP_MESSAGE');
+        const reprompt = "You can ask me how to prevent nappy rash or how to find the right size for Pampers nappies";
         this.emit(':ask', speechOutput, reprompt);
     },
     'AMAZON.CancelIntent': function () {
